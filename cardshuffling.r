@@ -208,3 +208,77 @@ pile.shuffle <- function(deck,Npiles=7)
   
   return(shuffled.deck)
 }
+
+beta.model.split.deck<-function(deck,alpha=2,beta=7)
+#The values for alpha and beta were chosen as they fit a nice dstirbution as a prior for deck proportion
+{
+  
+  split.prob<-rbeta(1,alpha,beta)
+  
+  cuts<-split.deck(deck,split.prob)
+  
+  return(cuts)
+}
+
+beta.alternating.overhand.shuffle <- function(deck)
+#Shuffles a deck of cards in heaps, alternatingly putting a fraction of the deck above then below the new 'shuffled' deck
+{
+  
+  cuts<-beta.model.split.deck(deck)
+  cut.one<-cuts[[1]]
+  cut.two<-cuts[[2]]
+  
+  shuffled.deck<-cut.one
+  
+  alternating = 1
+  
+  while(length(cut.one) != 0){
+    
+    cuts<-beta.model.split.deck(cut.two)
+    cut.one<-cuts[[1]]
+    
+    if(alternating){
+      shuffled.deck<-c(cut.one,shuffled.deck)
+      alternating=0
+    }else{
+      shuffled.deck<-c(shuffled.deck,cut.one)
+      alternating=1
+    }
+    
+    cut.two<-cuts[[2]]
+  }
+  
+   if(alternating){
+      shuffled.deck<-c(cut.two,shuffled.deck)
+    }else{
+      shuffled.deck<-c(shuffled.deck,cut.two)
+    }
+  
+  return(shuffled.deck)
+  
+}
+
+beta.consecutive.overhand.shuffle <- function(deck)
+#Shuffles a deck of cards in heaps, placing a fraction of one half (governed by prob) consecutively atop the other half
+{
+   
+  cuts<-beta.model.split.deck(deck)
+  cut.one<-cuts[[1]]
+  cut.two<-cuts[[2]]
+  
+  shuffled.deck<-cut.one
+      
+  while(length(cut.one) != 0){
+          
+    cuts<-beta.model.split.deck(cut.two)
+    cut.one<-cuts[[1]]
+    
+    shuffled.deck<-c(cut.one,shuffled.deck)
+
+    cut.two<-cuts[[2]]
+  }
+  
+  shuffled.deck<-c(cut.two,shuffled.deck)
+  
+  return(shuffled.deck)
+}
