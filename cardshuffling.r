@@ -1,3 +1,5 @@
+# A module full of useful shuffles. These shall be analysed to test which performs best with real magic data.
+
 Bayer.Diaconis.coefficients <- function(n){
   
   BD.dist<-choose(n,0:n)*(1/2)^n
